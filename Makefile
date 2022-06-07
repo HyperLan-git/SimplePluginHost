@@ -1,5 +1,5 @@
 INCLUDES=$(wildcard Source/*.hpp) SimplePluginHost/JuceLibraryCode/JuceHeader.h
-EXPHEADERS=export/include
+EXPHEADERS=export/include/
 
 LIBEXPORT=export/lib/libSimplePluginHost.a
 LIB=SimplePluginHost/Builds/LinuxMakefile/build/libSimplePluginHost.a
@@ -10,8 +10,6 @@ all: prepare
 .SILENT:
 
 prepare: $(LIBEXPORT) $(EXPHEADERS)
-
-$(EXPHEADERS): $(INCLUDES)
 	echo "Copying headers in export/include"
 	cp $(INCLUDES) $(EXPHEADERS)
 
