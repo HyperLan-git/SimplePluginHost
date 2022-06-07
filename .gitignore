@@ -1,0 +1,4 @@
+.vscode
+export/include/*
+export/lib/*
+SimplePluginHost/Builds/LinuxMakefile/build
