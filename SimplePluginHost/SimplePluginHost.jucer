@@ -19,10 +19,10 @@
         <MODULEPATH id="juce_core" path="../../../Downloads/JUCE/modules"/>
         <MODULEPATH id="juce_gui_extra" path="../../../Downloads/JUCE/modules"/>
         <MODULEPATH id="juce_gui_basics" path="../../../Downloads/JUCE/modules"/>
-        <MODULEPATH id="juce_events" path="../../../Downloads/JUCE/modules"/>
         <MODULEPATH id="juce_data_structures" path="../../../Downloads/JUCE/modules"/>
         <MODULEPATH id="juce_audio_basics" path="../../../Downloads/JUCE/modules"/>
         <MODULEPATH id="juce_graphics" path="../../../Downloads/JUCE/modules"/>
+        <MODULEPATH id="juce_events" path="../../../Downloads/JUCE/modules"/>
       </MODULEPATHS>
     </LINUX_MAKE>
     <VS2022 targetFolder="Builds/VisualStudio2022">
@@ -35,10 +35,10 @@
         <MODULEPATH id="juce_core" path="../../../Downloads/JUCE/modules"/>
         <MODULEPATH id="juce_gui_extra" path="../../../Downloads/JUCE/modules"/>
         <MODULEPATH id="juce_gui_basics" path="../../../Downloads/JUCE/modules"/>
-        <MODULEPATH id="juce_events" path="../../../Downloads/JUCE/modules"/>
         <MODULEPATH id="juce_data_structures" path="../../../Downloads/JUCE/modules"/>
         <MODULEPATH id="juce_audio_basics" path="../../../Downloads/JUCE/modules"/>
         <MODULEPATH id="juce_graphics" path="../../../Downloads/JUCE/modules"/>
+        <MODULEPATH id="juce_events" path="../../../Downloads/JUCE/modules"/>
       </MODULEPATHS>
     </VS2022>
   </EXPORTFORMATS>

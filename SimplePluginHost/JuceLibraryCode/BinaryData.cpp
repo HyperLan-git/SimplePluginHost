@@ -10,6 +10,9 @@ namespace BinaryData
 //================== test.cpp ==================
 static const unsigned char temp_binary_data_0[] =
 "#include \"test.hpp\"\n"
+"\n"
+"#include \"JuceHeader.h\"\n"
+"\n"
 "int yolo() { return 420; }";
 
 const char* test_cpp = (const char*) temp_binary_data_0;
@@ -26,7 +29,7 @@ const char* getNamedResource (const char* resourceNameUTF8, int& numBytes)
 
     switch (hash)
     {
-        case 0xbbaa5c76:  numBytes = 46; return test_cpp;
+        case 0xbbaa5c76:  numBytes = 72; return test_cpp;
         default: break;
     }
 

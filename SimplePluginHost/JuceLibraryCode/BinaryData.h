@@ -9,7 +9,7 @@
 namespace BinaryData
 {
     extern const char*   test_cpp;
-    const int            test_cppSize = 46;
+    const int            test_cppSize = 72;
 
     // Number of elements in the namedResourceList and originalFileNames arrays.
     const int namedResourceListSize = 1;
