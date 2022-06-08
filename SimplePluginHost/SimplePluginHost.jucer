@@ -4,10 +4,12 @@
               displaySplashScreen="1" jucerFormatVersion="1" bundleIdentifier="fr.hyper.SimplePluginHost">
   <MAINGROUP id="zRWhWO" name="SimplePluginHost">
     <GROUP id="{CE592C02-83FA-2C6E-C01C-D787BC20D042}" name="Source">
-      <FILE id="K5x40l" name="test.cpp" compile="1" resource="1" file="../Source/test.cpp"/>
+      <FILE id="bUEA6y" name="SimplePluginHost.cpp" compile="1" resource="0"
+            file="../Source/SimplePluginHost.cpp"/>
     </GROUP>
   </MAINGROUP>
-  <JUCEOPTIONS JUCE_STRICT_REFCOUNTEDPOINTER="1"/>
+  <JUCEOPTIONS JUCE_STRICT_REFCOUNTEDPOINTER="1" JUCE_PLUGINHOST_VST3="1" JUCE_PLUGINHOST_AU="0"
+               JUCE_CUSTOM_VST3_SDK="0" JUCE_PLUGINHOST_VST="0" JUCE_USE_XRENDER="1"/>
   <EXPORTFORMATS>
     <LINUX_MAKE targetFolder="Builds/LinuxMakefile">
       <CONFIGURATIONS>
