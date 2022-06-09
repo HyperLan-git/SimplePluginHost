@@ -13,6 +13,15 @@ struct Plugin {
     std::unique_ptr<juce::AudioPluginInstance> plugin;
 };
 
+class MessageThread : public Thread {
+   public:
+    MessageThread() : Thread("MessageThread") {}
+    void run() {
+        JUCE_TRY { MessageManager::getInstance()->runDispatchLoop(); }
+        JUCE_CATCH_EXCEPTION
+    }
+};
+
 SimplePluginHost::SimplePluginHost(std::string file) {
     OwnedArray<PluginDescription> pluginDescriptions;
     KnownPluginList plist;
@@ -57,14 +66,23 @@ SimplePluginHost::SimplePluginHost(std::string file) {
     // instance->prepareToPlay(441000, 512);
     // instance->processBlock(auBuff, midiBuff);
 
+    instance->getPlayHead();
+    instance->enableAllBuses();
+    instance->prepareToPlay(44100, 512);
     pluginInstance = new Plugin{std::move(instance)};
 
     win->setVisible(true);
-    JUCE_TRY {
-        // loop until a quit message is received..
-        MessageManager::getInstance()->runDispatchLoop();
-    }
-    JUCE_CATCH_EXCEPTION
+    Thread* t = new MessageThread();
+    t->startThread(9);
+}
+
+const float** SimplePluginHost::update() {
+    juce::AudioSampleBuffer auBuff(2, 512);
+
+    juce::MidiBuffer midiBuff;
+
+    ((Plugin*)pluginInstance)->plugin->processBlock(auBuff, midiBuff);
+    return auBuff.getArrayOfReadPointers();
 }
 
 SimplePluginHost::~SimplePluginHost() {

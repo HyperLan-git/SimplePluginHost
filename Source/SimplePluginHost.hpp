@@ -6,6 +6,8 @@ class SimplePluginHost {
    public:
     SimplePluginHost(std::string file);
 
+    const float** update();
+
     ~SimplePluginHost();
 
    private:
