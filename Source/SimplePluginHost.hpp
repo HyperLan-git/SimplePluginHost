@@ -10,4 +10,5 @@ class SimplePluginHost {
 
    private:
     void* pluginInstance = NULL;
+    void* window = NULL;
 };

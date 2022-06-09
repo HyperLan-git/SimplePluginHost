@@ -4,9 +4,14 @@
               displaySplashScreen="1" jucerFormatVersion="1" bundleIdentifier="fr.hyper.SimplePluginHost">
   <MAINGROUP id="zRWhWO" name="SimplePluginHost">
     <GROUP id="{CE592C02-83FA-2C6E-C01C-D787BC20D042}" name="Source">
+      <FILE id="LWjae0" name="HostWindow.cpp" compile="1" resource="0" file="../Source/HostWindow.cpp"/>
       <FILE id="bUEA6y" name="SimplePluginHost.cpp" compile="1" resource="0"
             file="../Source/SimplePluginHost.cpp"/>
     </GROUP>
+    <FILE id="j5DnCg" name="HostComponent.cpp" compile="1" resource="0"
+          file="../Source/HostComponent.cpp"/>
+    <FILE id="u3qJmA" name="HostComponent.hpp" compile="0" resource="0"
+          file="../Source/HostComponent.hpp"/>
   </MAINGROUP>
   <JUCEOPTIONS JUCE_STRICT_REFCOUNTEDPOINTER="1" JUCE_PLUGINHOST_VST3="1" JUCE_PLUGINHOST_AU="0"
                JUCE_CUSTOM_VST3_SDK="0" JUCE_PLUGINHOST_VST="0" JUCE_USE_XRENDER="1"/>

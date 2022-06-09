@@ -6,6 +6,9 @@
 
 #include <utility>
 
+#include "HostComponent.hpp"
+#include "HostWindow.hpp"
+
 struct Plugin {
     std::unique_ptr<juce::AudioPluginInstance> plugin;
 };
@@ -35,26 +38,36 @@ SimplePluginHost::SimplePluginHost(std::string file) {
                .descriptiveName.getCharPointer()
                .getAddress());
 
-    float midiDataGoesInHere[2];
-    midiDataGoesInHere[0] = (float)0.01556;
-    midiDataGoesInHere[1] = (float)0.01556;
-    float* start = midiDataGoesInHere;
+    auto editor = instance->createEditor();
+    auto bc = editor->getConstrainer();
+    editor->setBounds(0, 0, 300, 300);
+    HostWindow* win = new HostWindow("PluginHost", editor);
+    this->window = win;
 
-    juce::AudioSampleBuffer auBuff(&start, 2, 1);
+    // float midiDataGoesInHere[2];
+    // midiDataGoesInHere[0] = (float)0.01556;
+    // midiDataGoesInHere[1] = (float)0.01556;
+    // float* start = midiDataGoesInHere;
 
-    juce::MidiBuffer midiBuff;
-    midiBuff.addEvent(juce::MidiMessage::noteOn(0, 32, (float)127), 0);
+    // juce::AudioSampleBuffer auBuff(&start, 2, 1);
 
-    instance->prepareToPlay(441000, 512);
-    instance->processBlock(auBuff, midiBuff);
+    // juce::MidiBuffer midiBuff;
+    // midiBuff.addEvent(juce::MidiMessage::noteOn(0, 32, (float)127), 0);
+
+    // instance->prepareToPlay(441000, 512);
+    // instance->processBlock(auBuff, midiBuff);
 
     pluginInstance = new Plugin{std::move(instance)};
 
-    /*auto editor = instance->createEditor();
-     auto bc = editor->getConstrainer();
-     editor->setBounds(0, 0, bc->getMinimumWidth(), bc->getMinimumHeight());*/
+    win->setVisible(true);
+    JUCE_TRY {
+        // loop until a quit message is received..
+        MessageManager::getInstance()->runDispatchLoop();
+    }
+    JUCE_CATCH_EXCEPTION
 }
 
 SimplePluginHost::~SimplePluginHost() {
     if (pluginInstance != NULL) delete (Plugin*)pluginInstance;
+    if (window != NULL) delete (HostWindow*)window;
 }

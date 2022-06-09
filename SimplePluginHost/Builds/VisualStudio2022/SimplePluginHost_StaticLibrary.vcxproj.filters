@@ -325,8 +325,14 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="..\..\..\Source\HostWindow.cpp">
+      <Filter>SimplePluginHost\Source</Filter>
+    </ClCompile>
     <ClCompile Include="..\..\..\Source\SimplePluginHost.cpp">
       <Filter>SimplePluginHost\Source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Source\HostComponent.cpp">
+      <Filter>SimplePluginHost</Filter>
     </ClCompile>
     <ClCompile Include="C:\JUCE\modules\juce_audio_basics\buffers\juce_AudioChannelSet.cpp">
       <Filter>JUCE Modules\juce_audio_basics\buffers</Filter>
@@ -1935,6 +1941,9 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\..\..\Source\HostComponent.hpp">
+      <Filter>SimplePluginHost</Filter>
+    </ClInclude>
     <ClInclude Include="C:\JUCE\modules\juce_audio_basics\audio_play_head\juce_AudioPlayHead.h">
       <Filter>JUCE Modules\juce_audio_basics\audio_play_head</Filter>
     </ClInclude>
