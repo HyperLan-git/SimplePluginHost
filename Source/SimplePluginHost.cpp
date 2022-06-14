@@ -1,6 +1,10 @@
 #include "SimplePluginHost.hpp"
 #define JUCE_LINUX 1
-//#define JUCE_DEBUG 1
+#define JUCE_CATCH_UNHANDLED_EXCEPTIONS 1
+#define JUCE_LOG_ASSERTIONS 1
+#define JUCE_DEBUG 1
+
+#define BUFFER_LENGTH 10000
 
 #include <JuceHeader.h>
 
@@ -13,35 +17,23 @@ struct Plugin {
     std::unique_ptr<juce::AudioPluginInstance> plugin;
 };
 
-class MessageThread : public Thread {
-   public:
-    MessageThread() : Thread("MessageThread") {}
-    void run() {
-        JUCE_TRY { MessageManager::getInstance()->runDispatchLoop(); }
-        JUCE_CATCH_EXCEPTION
-    }
-};
-
 SimplePluginHost::SimplePluginHost(std::string file) {
+    initialiseJuce_GUI();
+    juce::MessageManager::getInstance();
     OwnedArray<PluginDescription> pluginDescriptions;
     KnownPluginList plist;
     AudioPluginFormatManager pluginFormatManager;
     pluginFormatManager.addDefaultFormats();
     for (int i = 0; i < pluginFormatManager.getNumFormats(); ++i) {
-        printf("%s\n", pluginFormatManager.getFormat(i)
-                           ->getName()
-                           .getCharPointer()
-                           .getAddress());
         plist.scanAndAddFile(file, true, pluginDescriptions,
                              *pluginFormatManager.getFormat(i));
     }
-    printf("heya!%d\n", pluginDescriptions.size());
     if (pluginDescriptions.size() == 0) return;
     String msg = juce::String("Could not create instance");
 
     std::unique_ptr<juce::AudioPluginInstance> instance =
         pluginFormatManager.createPluginInstance(*pluginDescriptions[0], 48000,
-                                                 1024, msg);
+                                                 BUFFER_LENGTH * 2, msg);
     printf("%s : %s\n", instance->getName().getCharPointer().getAddress(),
            instance->getPluginDescription()
                .descriptiveName.getCharPointer()
@@ -66,26 +58,44 @@ SimplePluginHost::SimplePluginHost(std::string file) {
     // instance->prepareToPlay(441000, 512);
     // instance->processBlock(auBuff, midiBuff);
 
-    instance->getPlayHead();
     instance->enableAllBuses();
-    instance->prepareToPlay(44100, 512);
+    instance->prepareToPlay(48000, BUFFER_LENGTH);
     pluginInstance = new Plugin{std::move(instance)};
 
     win->setVisible(true);
-    Thread* t = new MessageThread();
-    t->startThread(9);
+    buffer = new juce::AudioSampleBuffer(4, BUFFER_LENGTH);
 }
 
 const float** SimplePluginHost::update() {
-    juce::AudioSampleBuffer auBuff(2, 512);
+    juce::AudioSampleBuffer* auBuff = (juce::AudioSampleBuffer*)buffer;
 
     juce::MidiBuffer midiBuff;
+    while (!midiMessages.empty()) {
+        SPH::MidiMessage evt = midiMessages.front();
+        midiMessages.pop();
+        midiBuff.addEvent(juce::MidiMessage(evt.data, evt.numBytes), 0);
+    }
+    ((Plugin*)pluginInstance)->plugin->processBlock(*auBuff, midiBuff);
+    return auBuff->getArrayOfReadPointers();
+}
 
-    ((Plugin*)pluginInstance)->plugin->processBlock(auBuff, midiBuff);
-    return auBuff.getArrayOfReadPointers();
+void SimplePluginHost::addMidiMessage(SPH::MidiMessage message) {
+    this->midiMessages.emplace(message);
+}
+
+void SimplePluginHost::handleMessages() {
+    JUCE_TRY { MessageManager::getInstance()->runDispatchLoop(); }
+    JUCE_CATCH_EXCEPTION;
+}
+
+bool SimplePluginHost::isVisible() {
+    if (window == NULL) return false;
+    return ((HostWindow*)window)->isVisible();
 }
 
 SimplePluginHost::~SimplePluginHost() {
     if (pluginInstance != NULL) delete (Plugin*)pluginInstance;
     if (window != NULL) delete (HostWindow*)window;
+    if (buffer != NULL) delete (juce::AudioSampleBuffer*)buffer;
+    juce::MessageManager::getInstance()->stopDispatchLoop();
 }
