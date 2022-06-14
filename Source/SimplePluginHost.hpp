@@ -11,7 +11,8 @@ struct MidiMessage {
 
 class SimplePluginHost {
    public:
-    SimplePluginHost(std::string file);
+    SimplePluginHost(std::string file, uint sampleRate, uint bufferLength,
+                     bool visible = false);
 
     const float** update();
 
@@ -19,7 +20,10 @@ class SimplePluginHost {
 
     void handleMessages();
 
+    void setVisible(bool visible);
     bool isVisible();
+
+    void stop();
 
     ~SimplePluginHost();
 
