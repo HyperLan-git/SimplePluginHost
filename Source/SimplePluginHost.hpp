@@ -5,7 +5,7 @@
 namespace SPH {
 struct MidiMessage {
     void* data;
-    int numBytes;
+    size_t numBytes;
 };
 }  // namespace SPH
 

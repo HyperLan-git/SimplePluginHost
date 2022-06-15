@@ -70,7 +70,6 @@ endif
 OBJECTS_STATIC_LIBRARY := \
   $(JUCE_OBJDIR)/HostWindow_777f1972.o \
   $(JUCE_OBJDIR)/SimplePluginHost_e673ae47.o \
-  $(JUCE_OBJDIR)/HostComponent_23996745.o \
   $(JUCE_OBJDIR)/include_juce_audio_basics_8a4e984a.o \
   $(JUCE_OBJDIR)/include_juce_audio_processors_10c03666.o \
   $(JUCE_OBJDIR)/include_juce_core_f26d17db.o \
@@ -101,11 +100,6 @@ $(JUCE_OBJDIR)/HostWindow_777f1972.o: ../../../Source/HostWindow.cpp
 $(JUCE_OBJDIR)/SimplePluginHost_e673ae47.o: ../../../Source/SimplePluginHost.cpp
 	-$(V_AT)mkdir -p $(JUCE_OBJDIR)
 	@echo "Compiling SimplePluginHost.cpp"
-	$(V_AT)$(CXX) $(JUCE_CXXFLAGS) $(JUCE_CPPFLAGS_STATIC_LIBRARY) $(JUCE_CFLAGS_STATIC_LIBRARY) -o "$@" -c "$<"
-
-$(JUCE_OBJDIR)/HostComponent_23996745.o: ../../../Source/HostComponent.cpp
-	-$(V_AT)mkdir -p $(JUCE_OBJDIR)
-	@echo "Compiling HostComponent.cpp"
 	$(V_AT)$(CXX) $(JUCE_CXXFLAGS) $(JUCE_CPPFLAGS_STATIC_LIBRARY) $(JUCE_CFLAGS_STATIC_LIBRARY) -o "$@" -c "$<"
 
 $(JUCE_OBJDIR)/include_juce_audio_basics_8a4e984a.o: ../../JuceLibraryCode/include_juce_audio_basics.cpp

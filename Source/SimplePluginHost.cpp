@@ -8,7 +8,6 @@
 
 #include <utility>
 
-#include "HostComponent.hpp"
 #include "HostWindow.hpp"
 
 struct Plugin {
@@ -33,7 +32,7 @@ SimplePluginHost::SimplePluginHost(std::string file, uint sampleRate,
     // TODO maybe the (a)sync shit that breaks everything comes from there
     std::unique_ptr<juce::AudioPluginInstance> instance =
         pluginFormatManager.createPluginInstance(
-            *pluginDescriptions[0], sampleRate, bufferLength * 2, msg);
+            *pluginDescriptions[0], sampleRate, bufferLength * 4, msg);
 
     auto editor = instance->createEditor();
     // editor->setBounds(0, 0, 300, 300);
@@ -66,7 +65,10 @@ void SimplePluginHost::addMidiMessage(SPH::MidiMessage message) {
 }
 
 void SimplePluginHost::handleMessages() {
-    JUCE_TRY { MessageManager::getInstance()->runDispatchLoop(); }
+    JUCE_TRY {
+        MessageManager::getInstance()->setCurrentThreadAsMessageThread();
+        MessageManager::getInstance()->runDispatchLoop();
+    }
     JUCE_CATCH_EXCEPTION;
 }
 

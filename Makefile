@@ -1,5 +1,7 @@
 INCLUDES=$(wildcard Source/*.hpp) SimplePluginHost/JuceLibraryCode/JuceHeader.h
 EXPHEADERS=export/include/
+EXPLIBS=export/lib/
+EXPDIRS=$(EXPHEADERS) $(EXPLIBS)
 
 LIBEXPORT=export/lib/libSimplePluginHost.a
 LIB=SimplePluginHost/Builds/LinuxMakefile/build/libSimplePluginHost.a
@@ -9,8 +11,8 @@ all: prepare
 
 .SILENT:
 
-prepare: $(LIBEXPORT) $(EXPHEADERS)
-	echo "Copying headers in export/include"
+prepare: $(EXPDIRS) $(LIBEXPORT)
+	echo "Copying headers in $(EXPHEADERS)"
 	cp $(INCLUDES) $(EXPHEADERS)
 
 $(LIB): $(SOURCES)
@@ -18,16 +20,17 @@ $(LIB): $(SOURCES)
 	make -C SimplePluginHost/Builds/LinuxMakefile
 	echo "Library compiled"
 
-
 $(LIBEXPORT): $(LIB)
-	echo "Copying library in export/lib"
+	echo "Copying library in $(EXPLIBS)"
 	cp $(LIB) $(LIBEXPORT)
 
 compile: $(LIB)
 
+$(EXPDIRS):
+	mkdir -p $(EXPDIRS)
+
 clean:
-	rm -rf export/include export/lib
-	mkdir export/include export/lib
+	rm -rf $(EXPDIRS)
 
 clean-all: clean
 	make clean -C SimplePluginHost/Builds/LinuxMakefile

@@ -9,10 +9,6 @@
       <FILE id="bUEA6y" name="SimplePluginHost.cpp" compile="1" resource="0"
             file="../Source/SimplePluginHost.cpp"/>
     </GROUP>
-    <FILE id="j5DnCg" name="HostComponent.cpp" compile="1" resource="0"
-          file="../Source/HostComponent.cpp"/>
-    <FILE id="u3qJmA" name="HostComponent.hpp" compile="0" resource="0"
-          file="../Source/HostComponent.hpp"/>
   </MAINGROUP>
   <JUCEOPTIONS JUCE_STRICT_REFCOUNTEDPOINTER="1" JUCE_PLUGINHOST_VST3="1" JUCE_PLUGINHOST_AU="0"
                JUCE_CUSTOM_VST3_SDK="0" JUCE_PLUGINHOST_VST="0" JUCE_WEB_BROWSER="0"/>
