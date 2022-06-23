@@ -6,6 +6,8 @@
 
 #include <JuceHeader.h>
 
+#include <fstream>
+#include <iostream>
 #include <utility>
 
 #include "HostWindow.hpp"
@@ -15,7 +17,8 @@ struct Plugin {
 };
 
 SimplePluginHost::SimplePluginHost(std::string file, uint sampleRate,
-                                   uint bufferLength, bool visible) {
+                                   uint bufferLength, bool visible,
+                                   std::string dataFile) {
     initialiseJuce_GUI();
     juce::MessageManager::getInstance();  // Make sure it gets created
     OwnedArray<PluginDescription> pluginDescriptions;
@@ -41,6 +44,15 @@ SimplePluginHost::SimplePluginHost(std::string file, uint sampleRate,
 
     instance->enableAllBuses();
     instance->prepareToPlay(sampleRate, bufferLength);
+    if (strcmp("None", dataFile.c_str()) != 0) {
+        std::ifstream s(dataFile, std::ifstream::ate | std::ios::binary);
+        size_t sz = s.tellg();
+        s.seekg(s.beg);
+        char* chars = new char[sz + 1]{0};
+        s.read(chars, sz);
+        instance->setStateInformation(chars, sz);
+        delete[] chars;
+    }
     pluginInstance = new Plugin{std::move(instance)};
 
     win->setVisible(visible);
@@ -83,6 +95,12 @@ void SimplePluginHost::setVisible(bool visible) {
 }
 
 void SimplePluginHost::stop() {
+    Plugin* p = (Plugin*)pluginInstance;
+    MemoryBlock b;
+    p->plugin->getStateInformation(b);
+    std::ofstream file("bin/plugin.dat", std::ios::out | std::ios::binary);
+    file.write((char*)b.getData(), b.getSize());
+    file.close();
     juce::MessageManager::getInstance()->stopDispatchLoop();
 }
 

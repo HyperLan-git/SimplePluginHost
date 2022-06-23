@@ -12,7 +12,7 @@ struct MidiMessage {
 class SimplePluginHost {
    public:
     SimplePluginHost(std::string file, uint sampleRate, uint bufferLength,
-                     bool visible = false);
+                     bool visible = false, std::string dataFile = "None");
 
     const float** update();
 
