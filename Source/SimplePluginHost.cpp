@@ -1,5 +1,10 @@
 #include "SimplePluginHost.hpp"
+
+#ifdef _WIN32
+#define JUCE_WINDOWS 1
+#else
 #define JUCE_LINUX 1
+#endif
 #define JUCE_CATCH_UNHANDLED_EXCEPTIONS 1
 #define JUCE_LOG_ASSERTIONS 1
 #define JUCE_DEBUG 1
@@ -16,21 +21,23 @@ struct Plugin {
     std::unique_ptr<juce::AudioPluginInstance> plugin;
 };
 
-SimplePluginHost::SimplePluginHost(std::string file, uint sampleRate,
-                                   uint bufferLength, bool visible,
+
+
+SimplePluginHost::SimplePluginHost(std::string file, unsigned int sampleRate,
+                                   unsigned int bufferLength, bool visible,
                                    std::string dataFile) {
-    initialiseJuce_GUI();
+    juce::initialiseJuce_GUI();
     juce::MessageManager::getInstance();  // Make sure it gets created
-    OwnedArray<PluginDescription> pluginDescriptions;
-    KnownPluginList plist;
-    AudioPluginFormatManager pluginFormatManager;
+    juce::OwnedArray<juce::PluginDescription> pluginDescriptions;
+    juce::KnownPluginList plist;
+    juce::AudioPluginFormatManager pluginFormatManager;
     pluginFormatManager.addDefaultFormats();
     for (int i = 0; i < pluginFormatManager.getNumFormats(); ++i) {
         plist.scanAndAddFile(file, true, pluginDescriptions,
                              *pluginFormatManager.getFormat(i));
     }
     if (pluginDescriptions.size() == 0) return;
-    String msg = juce::String("Could not create instance");
+    juce::String msg = juce::String("Could not create instance");
 
     // TODO maybe the (a)sync shit that breaks everything comes from there
     std::unique_ptr<juce::AudioPluginInstance> instance =
@@ -50,7 +57,7 @@ SimplePluginHost::SimplePluginHost(std::string file, uint sampleRate,
         s.seekg(s.beg);
         char* chars = new char[sz + 1]{0};
         s.read(chars, sz);
-        instance->setStateInformation(chars, sz);
+        instance->setStateInformation(chars, (int)sz);
         delete[] chars;
     }
     pluginInstance = new Plugin{std::move(instance)};
@@ -66,7 +73,7 @@ const float** SimplePluginHost::update() {
     while (!midiMessages.empty()) {
         SPH::MidiMessage evt = midiMessages.front();
         midiMessages.pop();
-        midiBuff.addEvent(juce::MidiMessage(evt.data, evt.numBytes), 0);
+        midiBuff.addEvent(juce::MidiMessage(evt.data, (int)evt.numBytes), 0);
     }
     ((Plugin*)pluginInstance)->plugin->processBlock(*auBuff, midiBuff);
     return auBuff->getArrayOfReadPointers();
@@ -78,8 +85,8 @@ void SimplePluginHost::addMidiMessage(SPH::MidiMessage message) {
 
 void SimplePluginHost::handleMessages() {
     JUCE_TRY {
-        MessageManager::getInstance()->setCurrentThreadAsMessageThread();
-        MessageManager::getInstance()->runDispatchLoop();
+        juce::MessageManager::getInstance()->setCurrentThreadAsMessageThread();
+        juce::MessageManager::getInstance()->runDispatchLoop();
     }
     JUCE_CATCH_EXCEPTION;
 }
@@ -96,7 +103,7 @@ void SimplePluginHost::setVisible(bool visible) {
 
 void SimplePluginHost::stop() {
     Plugin* p = (Plugin*)pluginInstance;
-    MemoryBlock b;
+    juce::MemoryBlock b;
     p->plugin->getStateInformation(b);
     std::ofstream file("bin/plugin.dat", std::ios::out | std::ios::binary);
     file.write((char*)b.getData(), b.getSize());
