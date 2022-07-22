@@ -15,7 +15,7 @@
   <EXPORTFORMATS>
     <LINUX_MAKE targetFolder="Builds/LinuxMakefile">
       <CONFIGURATIONS>
-        <CONFIGURATION isDebug="1" name="Debug" targetName="SimplePluginHost"/>
+        <CONFIGURATION isDebug="1" name="Debug" targetName="SimplePluginHost" optimisation="4"/>
         <CONFIGURATION isDebug="0" name="Release" targetName="SimplePluginHost"/>
       </CONFIGURATIONS>
       <MODULEPATHS>

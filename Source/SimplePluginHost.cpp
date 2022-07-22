@@ -21,8 +21,6 @@ struct Plugin {
     std::unique_ptr<juce::AudioPluginInstance> plugin;
 };
 
-
-
 SimplePluginHost::SimplePluginHost(std::string file, unsigned int sampleRate,
                                    unsigned int bufferLength, bool visible,
                                    std::string dataFile) {
@@ -67,6 +65,7 @@ SimplePluginHost::SimplePluginHost(std::string file, unsigned int sampleRate,
 }
 
 const float** SimplePluginHost::update() {
+    if (!active) return NULL;
     juce::AudioSampleBuffer* auBuff = (juce::AudioSampleBuffer*)buffer;
 
     juce::MidiBuffer midiBuff;
@@ -101,14 +100,19 @@ void SimplePluginHost::setVisible(bool visible) {
     ((HostWindow*)window)->setVisible(visible);
 }
 
+bool SimplePluginHost::isActive() { return active; }
+
 void SimplePluginHost::stop() {
+    active = false;
+    juce::MessageManager::getInstance()->stopDispatchLoop();
+    juce::MessageManager::deleteInstance();
+}
+
+void SimplePluginHost::savePluginData(std::ostream& stream) {
     Plugin* p = (Plugin*)pluginInstance;
     juce::MemoryBlock b;
     p->plugin->getStateInformation(b);
-    std::ofstream file("bin/plugin.dat", std::ios::out | std::ios::binary);
-    file.write((char*)b.getData(), b.getSize());
-    file.close();
-    juce::MessageManager::getInstance()->stopDispatchLoop();
+    stream.write((char*)b.getData(), b.getSize());
 }
 
 SimplePluginHost::~SimplePluginHost() {
