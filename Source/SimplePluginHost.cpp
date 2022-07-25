@@ -71,8 +71,9 @@ const float** SimplePluginHost::update() {
     juce::MidiBuffer midiBuff;
     while (!midiMessages.empty()) {
         SPH::MidiMessage evt = midiMessages.front();
-        midiMessages.pop();
         midiBuff.addEvent(juce::MidiMessage(evt.data, (int)evt.numBytes), 0);
+        delete[](char*) evt.data;
+        midiMessages.pop();
     }
     if (!active || pluginInstance == NULL) return NULL;
     ((Plugin*)pluginInstance)->plugin->processBlock(*auBuff, midiBuff);
@@ -103,9 +104,22 @@ void SimplePluginHost::setVisible(bool visible) {
 
 bool SimplePluginHost::isActive() { return active; }
 
+void* deleteWindow(void* window) {
+    if (window != NULL) delete (HostWindow*)window;
+    return NULL;
+}
+void* deletePlugin(void* plugin) {
+    if (plugin != NULL) delete (Plugin*)plugin;
+    return NULL;
+}
+
 void SimplePluginHost::stop() {
     active = false;
-    juce::MessageManagerLock lock;
+    void* a = pluginInstance;
+    juce::MessageManager::getInstance()->callFunctionOnMessageThread(
+        deleteWindow, window);
+    juce::MessageManager::getInstance()->callFunctionOnMessageThread(
+        deletePlugin, pluginInstance);
     juce::MessageManager::getInstance()->stopDispatchLoop();
 }
 
@@ -117,22 +131,7 @@ void SimplePluginHost::savePluginData(std::ostream& stream) {
     stream.write((char*)b.getData(), b.getSize());
 }
 
-void* deleteWindow(void* window) {
-    if (window != NULL) delete (HostWindow*)window;
-    return NULL;
-}
-void* deletePlugin(void* plugin) {
-    if (plugin != NULL) delete (Plugin*)plugin;
-    return NULL;
-}
-
 SimplePluginHost::~SimplePluginHost() {
-    juce::MessageManager::getInstance()->callFunctionOnMessageThread(
-        deleteWindow, window);
-    void* a = pluginInstance;
-    pluginInstance = NULL;
-    juce::MessageManager::getInstance()->callFunctionOnMessageThread(
-        deletePlugin, a);
     if (buffer != NULL) delete (juce::AudioSampleBuffer*)buffer;
     juce::shutdownJuce_GUI();
     juce::MessageManager::deleteInstance();
