@@ -21,6 +21,26 @@ struct Plugin {
     std::unique_ptr<juce::AudioPluginInstance> plugin;
 };
 
+std::map<std::string, std::string> readPlugins(std::vector<std::string> paths) {
+    std::map<std::string, std::string> result;
+    juce::AudioPluginFormatManager pluginFormatManager;
+
+    pluginFormatManager.addDefaultFormats();
+    for (std::string folder : paths)
+        for (auto entry : std::filesystem::directory_iterator(folder)) {
+            juce::OwnedArray<juce::PluginDescription> pluginDescriptions;
+            juce::KnownPluginList plist;
+            for (int i = 0; i < pluginFormatManager.getNumFormats(); ++i)
+                if (plist.scanAndAddFile(entry.path().c_str(), true,
+                                         pluginDescriptions,
+                                         *pluginFormatManager.getFormat(i))) {
+                    result.emplace(pluginDescriptions[0]->name.toStdString(),
+                                   entry.path());
+                }
+        }
+    return result;
+}
+
 SimplePluginHost::SimplePluginHost(std::string file, unsigned int sampleRate,
                                    unsigned int bufferLength, bool visible,
                                    std::string dataFile) {
@@ -31,8 +51,9 @@ SimplePluginHost::SimplePluginHost(std::string file, unsigned int sampleRate,
     juce::AudioPluginFormatManager pluginFormatManager;
     pluginFormatManager.addDefaultFormats();
     for (int i = 0; i < pluginFormatManager.getNumFormats(); ++i) {
-        plist.scanAndAddFile(file, true, pluginDescriptions,
-                             *pluginFormatManager.getFormat(i));
+        if (plist.scanAndAddFile(file, true, pluginDescriptions,
+                                 *pluginFormatManager.getFormat(i)))
+            break;
     }
     if (pluginDescriptions.size() == 0) return;
     juce::String msg = juce::String("Could not create instance");
@@ -105,7 +126,10 @@ void SimplePluginHost::setVisible(bool visible) {
 bool SimplePluginHost::isActive() { return active; }
 
 void* deleteWindow(void* window) {
-    if (window != NULL) delete (HostWindow*)window;
+    if (window != NULL) {
+        ((HostWindow*)window)->setVisible(false);
+        delete (HostWindow*)window;
+    }
     return NULL;
 }
 void* deletePlugin(void* plugin) {

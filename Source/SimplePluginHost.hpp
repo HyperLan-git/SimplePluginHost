@@ -2,6 +2,9 @@
 
 #include <queue>
 #include <string>
+#include <filesystem>
+#include <map>
+
 namespace SPH {
 struct MidiMessage {
     void* data;
@@ -38,3 +41,5 @@ class SimplePluginHost {
     bool active = true;
     std::queue<SPH::MidiMessage> midiMessages;
 };
+
+std::map<std::string, std::string> readPlugins(std::vector<std::string> paths);
