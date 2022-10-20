@@ -22,6 +22,7 @@ struct Plugin {
 };
 
 std::map<std::string, std::string> readPlugins(std::vector<std::string> paths) {
+    juce::MessageManager::getInstance();  // Make sure it gets created
     std::map<std::string, std::string> result;
     juce::AudioPluginFormatManager pluginFormatManager;
 
