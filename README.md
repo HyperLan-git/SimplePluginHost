@@ -33,8 +33,3 @@ This will remove everything in the export folder.
 make clean-all
 ```
 Will `make clean` and destroy any binaries created in the juce folders (useful if you changed anything in projucer).
-
-## Random shit included with this package (make sure everything is in there cause we ain't refunding you)
-Amörbius sussy battle royale (ekesbokessirisekes edition) ft. Walter White from fnf with No Brim 3 & knuckles + gru fards DLC (Dariacore music remix)
-Release date: 1984 with love from Brazil
-Play as the morbius main character gigachad to defeat the poopshitters in this epic battle for the future of LEGO city.
